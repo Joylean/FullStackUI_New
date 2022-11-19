@@ -1,0 +1,91 @@
+<div class="d-flex element1" role="search">
+    <div class="element1">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Departments
+            </button>
+            <!-- use *ngFor -->
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Electrical</a></li>
+              <li><a class="dropdown-item" href="#">Piping</a></li>
+              <li><a class="dropdown-item" href="#">Instrumentation</a></li>
+              <li><a class="dropdown-item" href="#">All employees in the company (should be an empty option)</a></li>
+            </ul>
+          </div>
+    </div>
+    <button class="btn btn-outline-success" type="submit" (click)="searchdepts()">Search</button>
+</div>
+
+<div class="element2">
+    <label class="text1">Employee</label>
+    <span class="text2">
+        <label class="switch">
+            <input type="checkbox" id="togBtn">
+            <div class="slider round">
+             <!--ADDED HTML -->
+             <span class="on">ON</span>
+             <span class="off">OFF</span>
+             <!--END-->
+            </div>
+        </label>
+    </span>
+    <label class="text1">Department</label>
+</div>
+
+<!-- Employee Details -->
+<div class="content" role="main">
+
+  <div class="mat-elevation-z8 cardtable">
+    <button class="export" mat-raised-button color="primary" (click)="exporter.exportTable('xlsx', {fileName:'test', sheet: 'sheet_name', Props: {Author: 'Talha'}})">Export</button>
+    <button class="import" mat-raised-button color="primary">Import</button>
+    <mat-form-field>
+        <mat-label>
+            Filter
+        </mat-label>
+        <input matInput placeholder="Filter" (keyup)="FilterChange($event)">
+    </mat-form-field>
+    <table mat-table matTableExporter [dataSource]="dataSource" #exporter="matTableExporter">
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+  
+      <!-- Weight Column -->
+      <ng-container matColumnDef="weight">
+        <th mat-header-cell *matHeaderCellDef> Weight </th>
+        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+      </ng-container>
+  
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> 
+            <button mat-mini-fab color="primary" (click)="EditbuttonClicked(element.code)" aria-label="Example icon button with a delete icon">
+                <mat-icon>edit</mat-icon>
+            </button>&nbsp;
+            <button mat-mini-fab color="primary" aria-label="Example icon button with a delete icon">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr (click)="getrow(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10]"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>
+<!-- Department Details -->
+
+
+
+
