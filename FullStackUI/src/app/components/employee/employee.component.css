@@ -22,6 +22,11 @@ table {
   right: 10px;
 }
 
+.addButton {
+  float: right;
+  right: 20px;
+}
+
 .element1 {
     align-items: center;
     justify-content: center;

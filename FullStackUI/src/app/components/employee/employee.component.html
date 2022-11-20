@@ -20,12 +20,10 @@
     <label class="text1">Employee</label>
     <span class="text2">
         <label class="switch">
-            <input type="checkbox" id="togBtn">
+            <input type="checkbox" id="togBtn" (click)="toggle()">
             <div class="slider round">
-             <!--ADDED HTML -->
-             <span class="on">ON</span>
-             <span class="off">OFF</span>
-             <!--END-->
+             <span class="on" value="1">ON</span>
+             <span class="off" value="0">OFF</span>
             </div>
         </label>
     </span>
@@ -33,9 +31,51 @@
 </div>
 
 <!-- Employee Details -->
-<div class="content" role="main">
+<div *ngIf="isToggled" class="content" role="main">
 
   <div class="mat-elevation-z8 cardtable">
+
+    <h5 class="text1">Employee Details</h5>
+    <button class="export" mat-raised-button color="primary" (click)="exporter.exportTable('xlsx', {fileName:'test', sheet: 'sheet_name', Props: {Author: 'Talha'}})">Export</button>
+    <button class="import" mat-raised-button color="primary">Import</button>
+    <button class="addButton" mat-raised-button color="primary" (click)="openPopup()">Add</button>
+    <mat-form-field>
+        <mat-label>
+            Filter
+        </mat-label>
+        <input matInput placeholder="Filter" (keyup)="FilterChange($event)">
+    </mat-form-field>
+    <table mat-table matTableExporter [dataSource]="dataSource" #exporter="matTableExporter">
+
+      <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+        <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+      </ng-container>
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> 
+            <button mat-mini-fab color="primary" (click)="EditbuttonClicked(element.code)" aria-label="Example icon button with a delete icon">
+                <mat-icon>edit</mat-icon>
+            </button>&nbsp;
+            <button mat-mini-fab color="primary" (click)="DeletebuttonClicked(element.code)" aria-label="Example icon button with a delete icon">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+      <tr (click)="getrow(row)" mat-row *matRowDef="let row; columns: displayedColumn;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10]"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>
+<!-- Department Details -->
+<div *ngIf="!isToggled" class="content">
+
+  <div class="mat-elevation-z8 cardtable">
+    <h5 class="text1">Department Details</h5>
     <button class="export" mat-raised-button color="primary" (click)="exporter.exportTable('xlsx', {fileName:'test', sheet: 'sheet_name', Props: {Author: 'Talha'}})">Export</button>
     <button class="import" mat-raised-button color="primary">Import</button>
     <mat-form-field>
@@ -44,48 +84,55 @@
         </mat-label>
         <input matInput placeholder="Filter" (keyup)="FilterChange($event)">
     </mat-form-field>
-    <table mat-table matTableExporter [dataSource]="dataSource" #exporter="matTableExporter">
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+    <table mat-table matTableExporter [dataSource]="dataDeptSource" #exporter="matTableExporter">
+
+      <ng-container [matColumnDef]="col" *ngFor="let col of displayedDeptColumns">
+        <th mat-header-cell *matHeaderCellDef> {{col}} </th>
+        <td mat-cell *matCellDef="let element"> {{element[col]}} </td>
       </ng-container>
-  
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
-  
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-      </ng-container>
-  
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef> Action </th>
-        <td mat-cell *matCellDef="let element"> 
-            <button mat-mini-fab color="primary" (click)="EditbuttonClicked(element.code)" aria-label="Example icon button with a delete icon">
-                <mat-icon>edit</mat-icon>
-            </button>&nbsp;
-            <button mat-mini-fab color="primary" aria-label="Example icon button with a delete icon">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr (click)="getrow(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedDeptColumns"></tr>
+      <tr (click)="getrow(row)" mat-row *matRowDef="let row; columns: displayedDeptColumns;"></tr>
     </table>
     <mat-paginator [pageSizeOptions]="[10]"
                    showFirstLastButtons>
     </mat-paginator>
   </div>
 </div>
-<!-- Department Details -->
 
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{'display':displayStyle}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Employee Details</h4>
+      </div>
+      <div class="modal-body">
+        <p>Add all details below</p>
+  
+        <!-- add here -->
+        <mat-form-field appearance="fill"  *ngFor="let empcol of popUpdata1">
+          <mat-label>{{empcol | titlecase}}</mat-label>
+          <input matInput>
+        </mat-form-field>
 
-
-
+        <mat-form-field appearance="fill" *ngFor="let empcols of popUpdata2">
+          <mat-label>{{empcols | titlecase}}</mat-label>
+          <mat-select>
+            <mat-option value="one">First option</mat-option>
+            <mat-option value="two">Second option</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- end -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" 
+                (click)="closePopup()">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
