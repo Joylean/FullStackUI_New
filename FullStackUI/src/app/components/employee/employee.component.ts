@@ -250,7 +250,22 @@ export class EmployeeComponent implements OnInit {
       this.ExcelData=XLSX.utils.sheet_to_json(workBook.Sheets[SheetNames[0]]);
       //data to be displayed in the Table
       // console.log([...this.empData,...this.ExcelData]);
-      this.dataSource = new MatTableDataSource([...this.empData,...this.ExcelData]);
+      // this.dataSource = new MatTableDataSource([...this.empData,...this.ExcelData]);
+      for(var i=0;i<this.ExcelData.length;i++){
+        this.addEmployee.employeeName=this.ExcelData[i].employeeName;
+        this.addEmployee.dateofJoining=this.ExcelData[i].dateofJoining;
+        this.addEmployee.email=this.ExcelData[i].email;
+        this.addEmployee.primaryContactNumber=this.ExcelData[i].primaryContactNumber;
+        this.addEmployee.department.departmentName=this.ExcelData[i].department;
+        this.addEmployee.department.location=this.ExcelData[i].location;
+        this.addEmployee.department.reportingManager=this.ExcelData[i].reportingManager;
+        this.addEmployee.project.projectName=this.ExcelData[i].project;
+        this.addEmployee.designation.designationName=this.ExcelData[i].designation;
+        this.addEmployee.dependent.dependentName=this.ExcelData[i].dependentName;
+        this.addEmployee.dependent.relationship=this.ExcelData[i].relationship;
+        this.addEmployeeDetail();
+        // console.log(this.addEmployee);
+      }
     }
   }
 

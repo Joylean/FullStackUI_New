@@ -54,7 +54,10 @@ export class EmployeeModalComponent implements OnInit {
     public datepipe: DatePipe,) { }
 
   ngOnInit(): void {
-    // this.dataSend['dateofJoining'] =this.datepipe.transform(this.dataSend["dateofJoining"],'dd/MM/yyyy');
+    // this.dataSend['dateofJoining'] =this.datepipe.transform(this.dataSend[0].dateofJoining,'dd/MM/yyyy');
+  //   this.dataSend[0].dateofJoining = this.dataSend[0].dateofJoining.getFullYear() + '-'
+  // + ('0' + (this.dataSend[0].dateofJoining.getMonth() + 1)).slice(-2) + '-'
+  // + ('0' + this.dataSend[0].dateofJoining.getDate()).slice(-2);
     this.updateEmployee=this.dataSend;
     this.displayedColumns=this.dataSend1;
     this.buttonAddUpdate=this.dataSend2;
