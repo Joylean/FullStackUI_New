@@ -1,0 +1,69 @@
+<div class="modal-dialog" role="document" *ngIf="buttonAddUpdate">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Update</h4>
+    </div>
+    <div class="modal-body">
+      <p>Update all details below</p>
+
+<form #form="ngForm">
+  <div class="form-group">
+    <label for="employeeName">{{displayedColumns[1]}}</label>
+    <input type="text" class="form-control" id="employeeName" name="employeeName" required [(ngModel)]="updateEmployee.employeeName" placeholder="ex.Joylean">
+  </div>
+  <div class="form-group">
+    <label for="departmentName">{{displayedColumns[2]}}</label>
+    <input type="text" class="form-control" id="departmentName" name="departmentName" required [(ngModel)]="updateEmployee.department.departmentName" placeholder="ex.Piping">
+  </div>
+  
+  <div class="form-group">
+    <label for="projectName">{{displayedColumns[3]}}</label>
+    <input type="text" class="form-control" id="projectName" name="projectName" required [(ngModel)]="updateEmployee.project.projectName" placeholder="ex.Allen">
+  </div>
+  <div class="form-group">
+    <label for="designationName">{{displayedColumns[4]}}</label>
+    <input type="text" class="form-control" id="designationName" name="designationName" required [(ngModel)]="updateEmployee.designation.designationName" placeholder="ex.Engineer">
+  </div>
+  <div class="form-group">
+    <label for="dateofJoining">{{displayedColumns[5]}}</label>
+    <input type="date" class="form-control" id="dateofJoining" required name="dateofJoining" [(ngModel)]="updateEmployee.dateofJoining">
+  </div>
+  <div class="form-group">
+    <label for="email">{{displayedColumns[6]}}</label>
+    <input type="email" class="form-control" id="email" name="email" required [(ngModel)]="updateEmployee.email" placeholder="abc@gmail.com">
+  </div>
+  <div class="form-group">
+    <label for="primaryContactNumber">{{displayedColumns[7]}}</label>
+    <input type="number" class="form-control" id="primaryContactNumber" required name="primaryContactNumber" [(ngModel)]="updateEmployee.primaryContactNumber" placeholder="9407517632">
+  </div>
+  
+  <div class="form-group">
+    <label for="location">{{displayedColumns[8]}}</label>
+    <input type="text" class="form-control" id="location" name="location" required [(ngModel)]="updateEmployee.department.location" placeholder="ex.Piping">
+
+  </div>
+  <div class="form-group">
+    <label for="reportingManager">{{displayedColumns[9]}}</label>
+    <input type="text" class="form-control" id="reportingManager" name="reportingManager" required [(ngModel)]="updateEmployee.department.reportingManager" placeholder="ex.Piping">
+
+  </div>
+  <div class="form-group">
+    <label for="dependentName">{{displayedColumns[10]}}</label>
+    <input type="string" class="form-control" id="dependentName" required name="dependentName" [(ngModel)]="updateEmployee.dependent.dependentName" placeholder="Enter your dependent. Eg:Job">
+  </div>
+  <div class="form-group">
+    <label for="relationship">{{displayedColumns[11]}}</label>
+    <input type="string" class="form-control" id="relationship" required name="relationship" [(ngModel)]="updateEmployee.dependent.relationship" placeholder="Enter your dependent relationship. Eg:father">
+  </div>
+</form>
+</div>
+<div class="modal-footer">
+  <button type="submit" class="btn btn-danger" (click)="updateEmployeeDetail()">
+    Update
+  </button>
+  <button type="submit" class="btn btn-danger" (click)="closeModal()">
+    Cancel
+  </button>
+</div>
+</div>
+</div>

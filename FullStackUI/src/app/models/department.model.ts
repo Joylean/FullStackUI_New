@@ -1,6 +1,6 @@
 export interface Department {
-    DeptId: string;
-    DepartmentName: string;
-    Location: string;
-    Manager: string;
+    id: number;
+    departmentName: string;
+    location: string;
+    reportingManager: string;
 }

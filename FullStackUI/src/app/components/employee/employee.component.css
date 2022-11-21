@@ -2,6 +2,10 @@ table {
   width: 100%;
 }
 
+.new-row {
+  background-color: #54a1dc
+}
+
 .content{
   display: block;
   margin: 20px;
@@ -30,7 +34,7 @@ table {
 .element1 {
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 30px;
 }
 
 .element2 {
