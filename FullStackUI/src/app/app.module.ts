@@ -9,12 +9,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from "../material-module";
 import { HttpClientModule } from "@angular/common/http";
 import { MatTableExporterModule } from 'mat-table-exporter';
+import { FormsModule } from '@angular/forms';
+import { EmployeeModalComponent } from './components/employee-modal/employee-modal.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    EmployeeComponent
+    EmployeeComponent,
+    EmployeeModalComponent
   ],
   imports: [
     BrowserModule,
@@ -22,9 +26,10 @@ import { MatTableExporterModule } from 'mat-table-exporter';
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
-    MatTableExporterModule
+    MatTableExporterModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

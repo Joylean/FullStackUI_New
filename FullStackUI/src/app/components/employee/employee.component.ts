@@ -1,8 +1,12 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import { MasterService } from 'src/app/service/master.service';
+import { EmployeeServiceService } from 'src/app/service/employee-service.service';
+import {DepartmentServiceService} from 'src/app/service/department-service.service';
+import {DesignationServiceService} from 'src/app/service/designation-service.service';
+import {ProjectServiceService} from 'src/app/service/project-service.service';
+import { Employee } from 'src/app/models/employee.model';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -10,30 +14,151 @@ import * as XLSX from 'xlsx';
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.css']
 })
-export class EmployeeComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'action'];
+export class EmployeeComponent implements OnInit {
+
+  ExcelData:any;
+  departmentName:any;
+  departmentSelected:string='';
+  displayedColumn: string[] = ['action'];
+  displayedColumns: string[] = [];
+  displayedDeptColumns: string[] = [];
   dataSource:any;
+  dataDeptSource:any;
   empData:any;
+  newEmpData:any=[];
+  deptData:any;
+  desiData:any;
+  projData:any;
+  isToggled: boolean = false;
+  popUpdata1: string[] = [];
+  title: string='';
+  titleButton: string='';
+  buttonAddUpdate: boolean = false;
+  sendData:any;
+
+  addEmployee: Employee = {
+    id:0,
+    employeeName: '',
+    dateofJoining: new Date(),
+    email: '',
+    primaryContactNumber: 0,
+    department: {
+      id:0,
+      departmentName: '',
+      location: '',
+      reportingManager: ''
+    },
+    project: {
+      id: 0,
+      projectName: ''
+    },
+    designation: {
+      id: 0,
+      designationName: ''
+    },
+    dependent: {
+      id: 0,
+      dependentName: '',
+      relationship: '',
+    }
+   }
 
   @ViewChild(MatPaginator) paginator !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor(private service: MasterService) { }
+  constructor(private service: EmployeeServiceService,
+    private deptservice: DepartmentServiceService,
+    private desiservice: DesignationServiceService,
+    private projservice: ProjectServiceService
+    ) { }
 
   ngOnInit(): void {
-    this.getAll();
+    if(this.isToggled){
+      this.getAllEmployeesData();
+    } else {
+      this.getAllDepartmentsData();
+    }
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+  displayStyle = "none";
+  
+  openPopup() {
+    this.displayStyle = "block";
+    // this.getAllDesignationsData();
+    // this.getAllProjectsData();
+    // this.getAllDepartmentsData();
+    this.title='Add Employee Details';
+    this.titleButton='Add';
+    this.buttonAddUpdate=false;
   }
 
-  getAll(){
-    this.dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);  
-    this.dataSource.sort=this.sort;
-    this.service.getEmployees().subscribe(result=>{
-      this.empData=result;
+  getAllEmployeesData(){
+    this.displayedColumns=[];
+    this.displayedColumn=['action'];
+    this.service.getAllEmployees().subscribe({
+      next: (employees) => {
+        this.empData=employees;
+        for (var k in this.empData[0]) {
+          this.displayedColumns.push(k);
+        }
+        this.displayedColumn.unshift(...this.displayedColumns);
+        this.dataSource = new MatTableDataSource(this.empData);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort=this.sort;
+      },
+      error: (response) => {
+        console.log(response);
+      }
     });
+  }
+
+  getAllDepartmentsData(){
+    this.displayedDeptColumns=[];
+    this.deptservice.getAllDepartments().subscribe({
+      next: (departments) => {
+        this.deptData=departments;
+        for (var k in this.deptData[0]) {
+          this.displayedDeptColumns.push(k);
+        }
+        this.dataDeptSource=new MatTableDataSource(this.deptData);
+        this.dataDeptSource.paginator=this.paginator;
+        this.dataDeptSource.sort=this.sort;
+      },
+      error: (response) => {
+        console.log(response);
+      }
+    })
+  }
+
+  getAllDesignationsData(){
+    this.desiservice.getAllDesignations().subscribe({
+      next: (designations) => {
+        this.desiData=designations;
+      },
+      error: (response) => {
+        console.log(response);
+      }
+    })
+  }
+
+  getAllProjectsData(){
+    this.projservice.getAllProjects().subscribe({
+      next: (projects) => {
+        this.projData=projects;
+      },
+      error: (response) => {
+        console.log(response);
+      }
+    })
+  }
+
+  toggle() {
+    this.isToggled = !this.isToggled;
+    if(this.isToggled){
+      this.getAllEmployeesData();
+    } else {
+      this.getAllDepartmentsData();
+    }
   }
 
   FilterChange(event: Event) {
@@ -41,46 +166,108 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
     this.dataSource.filter=filterValue;
   }
 
-  getrow(row:any){
-    console.log(row);
+  getrow(row:any) {
+    // console.log(row);
   }
 
-  EditbuttonClicked(row:any){
-    console.log(row);
+  EditbuttonClicked(row:any) {
+    var id=row.id;
+    this.service.getEmployee(id).subscribe({
+      next: (employee:any) => {
+        this.buttonAddUpdate=true;
+        //open modal
+        this.sendData=employee[0];
+        this.displayStyle = "block";
+        //Change all data to that of Update
+        this.title='Update Employee Details';
+        this.titleButton='Update';
+      },
+      error: (response) => {
+        console.log(response);
+      }
+    });
   }
   
-  searchdepts() {
-
+  delete(row:any) {
+    var newId=row['id'];
+      this.service.deleteEmployee(newId).subscribe({
+        next: () =>{
+          console.log("Deleted Successfully");
+          location.reload();
+        },
+        error: (response) => {
+          console.log(response);
+        }
+      })
   }
+
+  addEmployeeDetail(){
+    this.service.addEmployee(this.addEmployee).subscribe({
+      next: (employee) => {
+        location.reload();
+      },
+      error: (response) => {
+        console.log(response);
+      }
+    });
+    this.displayStyle = "none";
+  }
+
+  Departmentchange(val:string){
+    this.departmentSelected=val;
+    // console.log(this.departmentSelected);
+  }
+
+  searchdepts(){
+    this.newEmpData=[];
+    for(var i=0; i<this.empData.length; i++){
+      if(this.empData[i].department==this.departmentSelected){
+        this.newEmpData.push(this.empData[i]);
+      }
+    }    
+    this.dataSource = new MatTableDataSource(this.newEmpData);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort=this.sort;
+  }
+
+  closeModal(){
+    this.displayStyle = "none"; 
+  }
+
+  success(e:boolean){
+    this.displayStyle = "none";
+    location.reload();
+  }
+
+  ReadExcel(event:any){
+    //excel import
+    let file=event.target.files[0];
+    let fileReader= new FileReader();
+    fileReader.readAsBinaryString(file);
+    fileReader.onload=(e)=>{
+      var workBook=XLSX.read(fileReader.result,{type:'binary'});
+      var SheetNames = workBook.SheetNames;
+      this.ExcelData=XLSX.utils.sheet_to_json(workBook.Sheets[SheetNames[0]]);
+      //data to be displayed in the Table
+      // console.log([...this.empData,...this.ExcelData]);
+      // this.dataSource = new MatTableDataSource([...this.empData,...this.ExcelData]);
+      for(var i=0;i<this.ExcelData.length;i++){
+        this.addEmployee.employeeName=this.ExcelData[i].employeeName;
+        this.addEmployee.dateofJoining=this.ExcelData[i].dateofJoining;
+        this.addEmployee.email=this.ExcelData[i].email;
+        this.addEmployee.primaryContactNumber=this.ExcelData[i].primaryContactNumber;
+        this.addEmployee.department.departmentName=this.ExcelData[i].department;
+        this.addEmployee.department.location=this.ExcelData[i].location;
+        this.addEmployee.department.reportingManager=this.ExcelData[i].reportingManager;
+        this.addEmployee.project.projectName=this.ExcelData[i].project;
+        this.addEmployee.designation.designationName=this.ExcelData[i].designation;
+        this.addEmployee.dependent.dependentName=this.ExcelData[i].dependentName;
+        this.addEmployee.dependent.relationship=this.ExcelData[i].relationship;
+        this.addEmployeeDetail();
+        // console.log(this.addEmployee);
+      }
+    }
+  }
+
 }
 
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-  {position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na'},
-  {position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg'},
-  {position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al'},
-  {position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si'},
-  {position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P'},
-  {position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S'},
-  {position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl'},
-  {position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar'},
-  {position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K'},
-  {position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca'},
-];

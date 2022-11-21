@@ -1,31 +1,20 @@
-<div class="d-flex element1" role="search">
-    <div class="element1">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Departments
-            </button>
-            <!-- use *ngFor -->
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Electrical</a></li>
-              <li><a class="dropdown-item" href="#">Piping</a></li>
-              <li><a class="dropdown-item" href="#">Instrumentation</a></li>
-              <li><a class="dropdown-item" href="#">All employees in the company (should be an empty option)</a></li>
-            </ul>
-          </div>
-    </div>
-    <button class="btn btn-outline-success" type="submit" (click)="searchdepts()">Search</button>
+<div class="element1" *ngIf="isToggled">
+  <mat-form-field>
+    <mat-select placeholder="Select Department" name="departmentName" (selectionChange)="Departmentchange(departmentName)" [(ngModel)]="departmentName" >
+      <mat-option *ngFor="let dept of deptData" [value]="dept.departmentName" >{{ dept.departmentName }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button class="btn btn-outline-success" type="submit" (click)="searchdepts()">Search</button>
 </div>
 
 <div class="element2">
     <label class="text1">Employee</label>
     <span class="text2">
         <label class="switch">
-            <input type="checkbox" id="togBtn">
+            <input type="checkbox" id="togBtn" (click)="toggle()">
             <div class="slider round">
-             <!--ADDED HTML -->
-             <span class="on">ON</span>
-             <span class="off">OFF</span>
-             <!--END-->
+             <span class="on" value="1">ON</span>
+             <span class="off" value="0">OFF</span>
             </div>
         </label>
     </span>
@@ -33,11 +22,14 @@
 </div>
 
 <!-- Employee Details -->
-<div class="content" role="main">
+<div *ngIf="isToggled" class="content" role="main">
 
   <div class="mat-elevation-z8 cardtable">
+
+    <h5 class="text1">Employee Details</h5>
     <button class="export" mat-raised-button color="primary" (click)="exporter.exportTable('xlsx', {fileName:'test', sheet: 'sheet_name', Props: {Author: 'Talha'}})">Export</button>
-    <button class="import" mat-raised-button color="primary">Import</button>
+    <button class="import" mat-raised-button color="primary"><input type="file" (change)="ReadExcel($event)"></button>
+    <button class="addButton" mat-raised-button color="primary" (click)="openPopup()">Add</button>
     <mat-form-field>
         <mat-label>
             Filter
@@ -45,39 +37,25 @@
         <input matInput placeholder="Filter" (keyup)="FilterChange($event)">
     </mat-form-field>
     <table mat-table matTableExporter [dataSource]="dataSource" #exporter="matTableExporter">
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+
+      <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+        <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
       </ng-container>
-  
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
-  
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-      </ng-container>
-  
-      <!-- Symbol Column -->
+      <!-- Action Column -->
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef> Action </th>
         <td mat-cell *matCellDef="let element"> 
-            <button mat-mini-fab color="primary" (click)="EditbuttonClicked(element.code)" aria-label="Example icon button with a delete icon">
+            <button mat-mini-fab color="primary" (click)="EditbuttonClicked(element)" aria-label="Example icon button with a delete icon">
                 <mat-icon>edit</mat-icon>
             </button>&nbsp;
-            <button mat-mini-fab color="primary" aria-label="Example icon button with a delete icon">
+            <button mat-mini-fab color="primary" (click)="delete(element)" aria-label="Example icon button with a delete icon">
                 <mat-icon>delete</mat-icon>
             </button>
         </td>
       </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr (click)="getrow(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+      <tr (click)="getrow(row)" [ngClass]="{'new-row': row.department == 'Piping'}" mat-row *matRowDef="let row; columns: displayedColumn;"></tr>
     </table>
     <mat-paginator [pageSizeOptions]="[10]"
                    showFirstLastButtons>
@@ -85,7 +63,105 @@
   </div>
 </div>
 <!-- Department Details -->
+<div *ngIf="!isToggled" class="content">
 
+  <div class="mat-elevation-z8 cardtable">
+    <h5 class="text1">Department Details</h5>
+    <button class="export" mat-raised-button color="primary" (click)="exporter.exportTable('xlsx', {fileName:'test', sheet: 'sheet_name', Props: {Author: 'Talha'}})">Export</button>
+    <mat-form-field>
+        <mat-label>
+            Filter
+        </mat-label>
+        <input matInput placeholder="Filter" (keyup)="FilterChange($event)">
+    </mat-form-field>
+    <table mat-table matTableExporter [dataSource]="dataDeptSource" #exporter="matTableExporter">
 
+      <ng-container [matColumnDef]="col" *ngFor="let col of displayedDeptColumns">
+        <th mat-header-cell *matHeaderCellDef> {{col}} </th>
+        <td mat-cell *matCellDef="let element"> {{element[col]}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedDeptColumns"></tr>
+      <tr (click)="getrow(row)" mat-row *matRowDef="let row; columns: displayedDeptColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10]"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>
 
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{'display':displayStyle}" >
+  <div class="modal-dialog" role="document" *ngIf="!buttonAddUpdate">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add</h4>
+      </div>
+      <div class="modal-body">
+        <p>Add all details below</p>
+        <!-- Modal -->
+  <form #form="ngForm">
+    <div class="form-group">
+      <label for="employeeName">{{displayedColumns[1]}}</label>
+      <input type="text" class="form-control" id="employeeName" name="employeeName" required [(ngModel)]="addEmployee.employeeName" placeholder="ex.Joylean">
+    </div>
+    <div class="form-group">
+      <label for="departmentName">{{displayedColumns[2]}}</label>
+      <input type="text" class="form-control" id="departmentName" name="departmentName" required [(ngModel)]="addEmployee.department.departmentName" placeholder="ex.Piping">
+    </div>
+    
+    <div class="form-group">
+      <label for="projectName">{{displayedColumns[3]}}</label>
+      <input type="text" class="form-control" id="projectName" name="projectName" required [(ngModel)]="addEmployee.project.projectName" placeholder="ex.Allen">
+    </div>
+    <div class="form-group">
+      <label for="designationName">{{displayedColumns[4]}}</label>
+      <input type="text" class="form-control" id="designationName" name="designationName" required [(ngModel)]="addEmployee.designation.designationName" placeholder="ex.Engineer">
+    </div>
+    <div class="form-group">
+      <label for="dateofJoining">{{displayedColumns[5]}}</label>
+      <input type="date" class="form-control" id="dateofJoining" required name="dateofJoining" [(ngModel)]="addEmployee.dateofJoining" placeholder="12/09/1996">
+    </div>
+    <div class="form-group">
+      <label for="email">{{displayedColumns[6]}}</label>
+      <input type="email" class="form-control" id="email" name="email" required [(ngModel)]="addEmployee.email" placeholder="abc@gmail.com">
+    </div>
+    <div class="form-group">
+      <label for="primaryContactNumber">{{displayedColumns[7]}}</label>
+      <input type="number" class="form-control" id="primaryContactNumber" required name="primaryContactNumber" [(ngModel)]="addEmployee.primaryContactNumber" placeholder="9407517632">
+    </div>
+    
+    <div class="form-group">
+      <label for="location">{{displayedColumns[8]}}</label>
+      <input type="text" class="form-control" id="location" name="location" required [(ngModel)]="addEmployee.department.location" placeholder="ex.Piping">
 
+    </div>
+    <div class="form-group">
+      <label for="reportingManager">{{displayedColumns[9]}}</label>
+      <input type="text" class="form-control" id="reportingManager" name="reportingManager" required [(ngModel)]="addEmployee.department.reportingManager" placeholder="ex.Piping">
+
+    </div>
+    <div class="form-group">
+      <label for="dependentName">{{displayedColumns[10]}}</label>
+      <input type="string" class="form-control" id="dependentName" required name="dependentName" [(ngModel)]="addEmployee.dependent.dependentName" placeholder="Enter your dependent. Eg:Job">
+    </div>
+    <div class="form-group">
+      <label for="relationship">{{displayedColumns[11]}}</label>
+      <input type="string" class="form-control" id="relationship" required name="relationship" [(ngModel)]="addEmployee.dependent.relationship" placeholder="Enter your dependent relationship. Eg:father">
+    </div>
+  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-danger" (click)="addEmployeeDetail()">
+          Add
+        </button>
+        <button type="submit" class="btn btn-danger" (click)="closeModal()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+  <app-employee-modal *ngIf="buttonAddUpdate" [dataSend]="sendData" [dataSend1]="displayedColumns" [dataSend2]="buttonAddUpdate" (onSendBack)="success($event)"></app-employee-modal>
+</div>

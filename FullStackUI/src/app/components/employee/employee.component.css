@@ -2,6 +2,10 @@ table {
   width: 100%;
 }
 
+.new-row {
+  background-color: #54a1dc
+}
+
 .content{
   display: block;
   margin: 20px;
@@ -22,10 +26,15 @@ table {
   right: 10px;
 }
 
+.addButton {
+  float: right;
+  right: 20px;
+}
+
 .element1 {
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 30px;
 }
 
 .element2 {
