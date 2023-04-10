@@ -12,13 +12,16 @@ import { MatTableExporterModule } from 'mat-table-exporter';
 import { FormsModule } from '@angular/forms';
 import { EmployeeModalComponent } from './components/employee-modal/employee-modal.component';
 import { DatePipe } from '@angular/common';
+import { ModalComponentComponent } from './components/modal-component/modal-component.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     EmployeeComponent,
-    EmployeeModalComponent
+    EmployeeModalComponent,
+    ModalComponentComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,8 @@ import { DatePipe } from '@angular/common';
     MaterialModule,
     HttpClientModule,
     MatTableExporterModule,
-    FormsModule
+    FormsModule,
+    DragDropModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]
