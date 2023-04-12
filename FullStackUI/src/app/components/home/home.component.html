@@ -3,62 +3,42 @@
   <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
   <button class="btn btn-outline-success" type="submit">Search</button>
 </form> -->
-<div style="margin: 10px;"></div>
-<div class="card" style="padding: 10px;">
-
-  <div class="row">
-    <div class="column">
-      <div class="card card1">
-        <div id="container">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmo9P32u400zjyz_Hx6fcp_Cbl3qF1rrLZ2w&usqp=CAU" class="card-img-top" alt="...">
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Departments</h5>
-          <p class="card-text">Click to see all the departments</p>
-        </div>
-        <div class="card-footer">
-          <a href="#" class="btn btn-primary">Click</a>
-        </div>
-      </div>
-    </div>
-  
-    <div class="column">
-      <div class="card card1">
-        <div id="container">
-          <img src="https://elearningindustry.com/wp-content/uploads/2019/12/the-value-of-employee-training.jpg" class="card-img-top" alt="...">
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Trainings</h5>
-          <p class="card-text">Training available are on Angular js, .net core and SQL database</p>
-          <!-- <a href="#" class="btn btn-primary">Click</a> -->
+<div style="padding: 10px;">
+  <div style="display: flex; margin: 10px;">
+    <div cdkDropList
+     [cdkDropListData]="carddata"
+     (cdkDropListDropped)="drop($event)"
+     [cdkDropListConnectedTo]="firstList"
+     #otherList="cdkDropList">
+      <div cdkDrag *ngFor="let cardata of carddata" class="item">
+        <div class="card">
+          <div id="container">
+            <img src={{cardata.data}} class="card-img-top" alt="...">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{cardata.title}}</h5>
+            <p class="card-text">{{cardata.para}}</p>
+            <a href="#" class="btn btn-primary">{{cardata.button}}</a>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="column">
-      <div class="card card1">
-        <div id="container">
-          <img src="https://api.time.com/wp-content/uploads/2018/07/interns-history.jpg" class="card-img-top" alt="...">
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Intern Applications</h5>
-          <p class="card-text">Fields open to Intern applications are:</p>
-        </div>
-        <div class="card-footer">
-          <a href="#" class="btn btn-primary">Click</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="column">
-      <div class="card card1">
-        <div id="container">
-          <img src="https://www.susangreenecopywriter.com/wp-content/uploads/2013/01/iStock_000039291924_Medium.jpg" class="card-img-top" alt="...">
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">About us</h5>
-          <p class="card-text">Contact us over here</p>
-          <!-- <a href="#" class="btn btn-primary">Click</a> -->
+    
+    <div cdkDropList
+     [cdkDropListData]="carddatatwo"
+     (cdkDropListDropped)="drop($event)" 
+     [cdkDropListConnectedTo]="otherList"
+     #firstList="cdkDropList">
+      <div cdkDrag *ngFor="let cardata of carddatatwo" class="item">
+        <div class="card">
+          <div id="container">
+            <img src={{cardata.data}} class="card-img-top" alt="...">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{cardata.title}}</h5>
+            <p class="card-text">{{cardata.para}}</p>
+            <a href="#" class="btn btn-primary">{{cardata.button}}</a>
+          </div>
         </div>
       </div>
     </div>

@@ -1,0 +1,30 @@
+[  
+  {  
+    "id": 1,  
+    "data": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmo9P32u400zjyz_Hx6fcp_Cbl3qF1rrLZ2w&usqp=CAU",  
+    "title": "Departments",  
+    "para": "Click to see all the departments",
+    "button":"click"
+  },  
+  {  
+    "id": 2,  
+    "data": "https://elearningindustry.com/wp-content/uploads/2019/12/the-value-of-employee-training.jpg",  
+    "title": "Trainings",  
+    "para": "Training available are on Angular js, .net core and SQL database",
+    "button":"enter"  
+  },  
+  {  
+    "id": 3,  
+    "data": "https://api.time.com/wp-content/uploads/2018/07/interns-history.jpg",  
+    "title": "Intern Applications",  
+    "para": "Fields open to Intern applications",
+    "button":"go"   
+  },  
+  {  
+    "id": 4, 
+    "data": "https://www.susangreenecopywriter.com/wp-content/uploads/2013/01/iStock_000039291924_Medium.jpg",  
+    "title": "About us",  
+    "para": "Contact us over here",
+    "button":"call us" 
+  }
+]  

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { HomeComponent } from './components/home/home.component';
+import { ModalComponentComponent } from './components/modal-component/modal-component.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,13 @@ export const routes: Routes = [
     component: EmployeeComponent,
     data: {
       title: 'Employee'
+    }
+  },
+  {
+    path: 'Details',
+    component: ModalComponentComponent,
+    data: {
+      title: 'Details'
     }
   },
 ];
